@@ -1,0 +1,25 @@
+<div class="container">
+  <h1 class="my-4">Veterinarians</h1>
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Specialization</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @vets.each do |vet| %>
+        <tr>
+          <td><%= "#{vet.first_name} #{vet.last_name}" %></td>
+          <td><%= vet.email %></td>
+          <td><span class="badge bg-secondary"><%= vet.specialization %></span></td>
+          <td>
+            <%= link_to "View Details", vet_path(vet), class: "btn btn-sm btn-outline-info" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div> 

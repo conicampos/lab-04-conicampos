@@ -1,0 +1,40 @@
+<div class="container">
+  <h1 class="my-4">Appointments</h1>
+  <table class="table table-hover table-bordered">
+   <thead class="table-dark">
+      <tr>
+        <th>Date</th>
+        <th>Pet</th>
+        <th>Vet</th>
+        <th>Reason</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @appointments.each do |appointment| %>
+        <tr>
+          <td><%= appointment.date.strftime("%B %d, %Y - %H:%M") %></td>
+          <td><%= appointment.pet.name %></td>
+          <td><%= "Dr(a). #{appointment.vet.last_name}" %></td>
+          <td><%= appointment.reason %></td>
+          <td>
+            <%# Usamos lógica simple aquí por si no has creado el método en el modelo aún %>
+            <span class="badge <%= appointment.status == 2 ? 'bg-success' : 'bg-warning' %>">
+              <%= case appointment.status
+                  when 0 then "Scheduled"
+                  when 1 then "In Progress"
+                  when 2 then "Completed"
+                  when 3 then "Cancelled"
+                  else "Unknown"
+                  end %>
+            </span>
+          </td>
+          <td>
+            <%= link_to "View Details", appointment_path(appointment), class: "btn btn-sm btn-outline-info" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div> 

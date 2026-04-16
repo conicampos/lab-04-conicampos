@@ -1,0 +1,35 @@
+<div class="container my-4">
+  <div class="card shadow-sm mb-4 border-warning">
+    <div class="card-body">
+      <h2 class="card-title">Appointment Details</h2>
+      <hr>
+      <p><strong>Date:</strong> <%= @appointment.date.strftime("%B %d, %Y - %H:%M") %></p>
+      <p><strong>Reason:</strong> <%= @appointment.reason %></p>
+      <p><strong>Status:</strong> 
+        <span class="badge bg-dark">
+          <%= case @appointment.status when 0 then "Scheduled" when 1 then "In Progress" when 2 then "Completed" when 3 then "Cancelled" end %>
+        </span>
+      </p>
+      <p><strong>Pet:</strong> <%= link_to @appointment.pet.name, pet_path(@appointment.pet) %></p>
+      <p><strong>Vet:</strong> <%= link_to "Dr. #{@appointment.vet.last_name}", vet_path(@appointment.vet) %></p>
+    </div>
+  </div>
+
+  <h3>Treatments</h3>
+  <div class="row">
+    <% @appointment.treatments.each do |t| %>
+      <div class="col-md-6 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-danger"><%= t.name %></h5>
+            <p class="mb-1"><strong>Medication:</strong> <%= t.medication %></p>
+            <p class="mb-1"><strong>Dosage:</strong> <%= t.dosage %></p>
+            <p class="mb-1"><strong>Administered at:</strong> <%= t.administered_at.strftime("%H:%M %p") %></p>
+            <p class="text-muted"><small><%= t.notes %></small></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <%= link_to "Back to Appointments", appointments_path, class: "btn btn-outline-secondary mt-3" %>
+</div>

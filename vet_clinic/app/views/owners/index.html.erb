@@ -1,0 +1,27 @@
+<div class="container">
+  <h1 class="my-4">Owners</h1>
+  <table class="table table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Number of Pets</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @owners.each do |owner| %>
+        <tr>
+          <td><%= "#{owner.first_name} #{owner.last_name}" %></td>
+          <td><%= owner.email %></td>
+          <td><%= owner.phone %></td>
+          <td><span class="badge bg-primary"><%= owner.pets.count %></span></td>
+          <td>
+            <%= link_to "View Details", owner_path(owner), class: "btn btn-sm btn-outline-info" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
