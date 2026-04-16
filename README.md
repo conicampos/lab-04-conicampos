@@ -1,112 +1,104 @@
-
-# Lab 3 — VetClinic: Models, Migrations, and Seed Data
-
-## System Description
-
-Throughout the following labs, you will progressively build **VetClinic**: a web application for managing a veterinary clinic. By the end of the semester, you will have a fully functional application capable of handling the clinic's daily operations.
-
-The application will allow clinic staff to:
-
-- Register pet owners and their pets, keeping track of species, breed, and medical history.
-- Manage the clinic's veterinarians with their specializations.
-- Schedule and manage appointments between pets and veterinarians, including date, time, and reason for the visit.
-- Record treatments administered during appointments, tracking the treatment type, medication, dosage, and clinical notes.
-- Track appointment status through its lifecycle: scheduled, in progress, completed, and cancelled.
-
-Across the labs, you will progressively implement:
-
-- Data modeling with owners, pets, veterinarians, appointments, and treatments.
-- Read-only views to browse and inspect records.
-- Associations and validations to ensure data integrity and enforce business rules.
-- CRUD operations with forms for all main entities.
-- Rich text clinical notes using ActionText.
-- Nested forms for managing treatments within an appointment.
-- Authentication and authorization to restrict access based on user roles.
-- Deployment to a cloud server.
+# Lab 4 — VetClinic: Index & Show Views
 
 ## Objective
 
-In this lab, you will set up the initial data model for VetClinic by creating all necessary models with their attributes and associations, and populating the database with sample data. **No validations are required in this lab** — those will be added in a future lab.
+In this lab, you will add controllers and views to display the data you created in Lab 3. By the end, users will be able to browse lists of records and view the details of each one. **No create/edit functionality yet** — this lab focuses exclusively on read-only pages.
+
+## Setup
+
+In this lab you will continue working on the VetClinic application you built in Lab 3, but you must submit it in a **new repository**. Your Lab 3 repository will not be reviewed for this lab.
+
+1. **Create a new, empty repository** on GitHub (no README, no .gitignore, no license — completely empty). Make sure it is **public** so the teaching assistant can review it.
+
+2. In your local `vet_clinic` project from Lab 3, add the new repository as a remote and push your code:
+
+```bash
+cd vet_clinic
+git remote add lab4 <your-new-repo-url>
+git push -u lab4 main
+```
+
+3. Verify on GitHub that your code is now in the new repository.
+
+4. From now on, push your Lab 4 work to this new remote:
+
+```bash
+git push lab4 main
+```
+
+5. **Submit the link to your new repository on Canvas.**
 
 ## Instructions
 
-### 1. Create a New Rails Application
+### 1. Generate Controllers
 
-- Create a new Rails application called `vet_clinic` using **PostgreSQL** as the database.
-- Make sure the application runs without errors before proceeding.
+Generate controllers for the following resources with `index` and `show` actions:
 
-### 2. Create Models and Migrations
+- **Owners**
+- **Pets**
+- **Vets**
+- **Appointments**
 
-Generate the following models with the specified attributes. Do **not** add validations yet — those will come in a future lab.
+You do not need a controller for Treatments — they will be displayed within the Appointment show page.
 
-**Owner**
-- `first_name:string`
-- `last_name:string`
-- `email:string`
-- `phone:string`
-- `address:text`
+### 2. Define Routes
 
-**Pet**
-- `name:string`
-- `species:string`
-- `breed:string`
-- `date_of_birth:date`
-- `weight:decimal`
-- `owner_id:integer`
+In `config/routes.rb`, define resourceful routes for each of the four resources, but limit them to only the `index` and `show` actions. Set the root path to the Owners index page.
 
-**Vet**
-- `first_name:string`
-- `last_name:string`
-- `email:string`
-- `phone:string`
-- `specialization:string`
+### 3. Index Views
 
-**Appointment**
-- `pet_id:integer`
-- `vet_id:integer`
-- `date:datetime`
-- `reason:string`
-- `status:integer`
+Create an index view for each resource that displays a table listing all records. Each table should include the most relevant columns for that entity:
 
-**Treatment**
-- `appointment_id:integer`
-- `name:string`
-- `medication:string`
-- `dosage:string`
-- `notes:text`
-- `administered_at:datetime`
+| Resource     | Columns to display                                      |
+|--------------|---------------------------------------------------------|
+| Owners       | Full name, email, phone, number of pets                 |
+| Pets         | Name, species, breed, owner name, date of birth         |
+| Vets         | Full name, email, specialization                        |
+| Appointments | Date, pet name, vet name, reason, status                |
 
-Run the migrations to create all tables in the database.
+Each row should include a link to the corresponding show page (e.g., clicking an owner's name takes you to their detail page).
 
-### 3. Add Associations
+### 4. Show Views
 
-Define the following associations in your models using `has_many` and `belongs_to`:
+Create a show view for each resource that displays all of its attributes and its related records:
 
-- An **Owner** has many **Pets**.
-- A **Pet** belongs to an **Owner**.
-- A **Pet** has many **Appointments**.
-- A **Vet** has many **Appointments**.
-- An **Appointment** belongs to a **Pet** and belongs to a **Vet**.
-- An **Appointment** has many **Treatments**.
-- A **Treatment** belongs to an **Appointment**.
+**Owner show page**
+- Display all owner attributes (name, email, phone, address).
+- List all of the owner's pets with links to each pet's show page.
 
-### 4. Seed Data
+**Pet show page**
+- Display all pet attributes (name, species, breed, date of birth, weight).
+- Show the owner's name as a link to the owner's show page.
+- List all of the pet's appointments with links to each appointment's show page.
 
-Create a seed file (`db/seeds.rb`) with sample data for each table. Your seed file should include:
+**Vet show page**
+- Display all vet attributes (name, email, phone, specialization).
+- List all of the vet's appointments with links to each appointment's show page.
 
-- At least 3 owners with different names and contact information.
-- At least 5 pets distributed among the owners, with a mix of species (e.g., dog, cat, rabbit).
-- At least 2 veterinarians with different specializations (e.g., general practice, surgery, dermatology).
-- At least 5 appointments with different statuses. Use integer values for the status field (e.g., 0 for scheduled, 1 for in progress, 2 for completed, 3 for cancelled).
-- At least 5 treatments linked to completed or in-progress appointments.
+**Appointment show page**
+- Display all appointment attributes (date, reason, status).
+- Show the pet's name and the vet's name as links to their respective show pages.
+- List all treatments for this appointment, displaying: name, medication, dosage, administered at, and notes.
 
-Use the associations to create related records in the seed file (e.g., `owner.pets.create(...)` or `Pet.create(owner: owner, ...)`).
+### 5. Navigation
 
+Add a shared navigation bar (use a partial in `app/views/layouts/`) that includes links to each of the four index pages. The navigation bar should be visible on every page.
+
+Use Bootstrap to style the navigation bar and the rest of the application. You may use the Bootstrap CDN or install it via a gem.
+
+### 6. Formatting
+
+Apply the following formatting to improve readability:
+
+- Display dates in a human-friendly format (e.g., `March 15, 2026` instead of `2026-03-15`).
+- Display the appointment status as a word (e.g., "Scheduled", "Completed") instead of the raw integer value.
+- Use Bootstrap classes to style tables, links, and page layout.
 
 ## Deliverables
 
-- A working Rails application with PostgreSQL.
-- All five models created with the correct attributes and associations.
-- All migrations applied successfully (`rails db:migrate`).
-- Seed file populating meaningful sample data for all tables using associations (`rails db:seed`).
-- Verify your data is correctly stored by checking it in the Rails console (`rails console`).
+- Controllers with `index` and `show` actions for Owners, Pets, Vets, and Appointments.
+- Resourceful routes limited to `index` and `show`.
+- Index pages displaying tables of records with links to show pages.
+- Show pages displaying all attributes and related records with navigation between them.
+- A shared navigation bar linking to all index pages.
+- Bootstrap styling applied throughout the application.
